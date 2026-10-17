@@ -200,6 +200,9 @@ export function ShopProvider({ children }) {
   });
 
   const [searchQuery, setSearchQuery] = useState('');
+  const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
+  const [isCartBumping, setIsCartBumping] = useState(false);
+  const [flyingPackets, setFlyingPackets] = useState([]);
 
   useEffect(() => {
     localStorage.setItem('on_cart', JSON.stringify(cart));
@@ -209,7 +212,56 @@ export function ShopProvider({ children }) {
     localStorage.setItem('on_wishlist', JSON.stringify(wishlist));
   }, [wishlist]);
 
-  const addToCart = (product, quantity = 1, size = 'Standard Pouch') => {
+  const triggerFlyToCart = (imgUrl, startRect) => {
+    if (!startRect) return;
+    const cartTarget = document.getElementById('floating-cart-target');
+    if (!cartTarget) return;
+
+    const targetRect = cartTarget.getBoundingClientRect();
+    const startX = startRect.left + (startRect.width / 2);
+    const startY = startRect.top + (startRect.height / 2);
+    const targetX = targetRect.left + (targetRect.width / 2);
+    const targetY = targetRect.top + (targetRect.height / 2);
+
+    const deltaX = targetX - startX;
+    const deltaY = targetY - startY;
+
+    const packetId = 'packet_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+    const newPacket = {
+      id: packetId,
+      img: imgUrl,
+      startX,
+      startY,
+      deltaX,
+      deltaY,
+    };
+
+    setFlyingPackets(prev => [...prev, newPacket]);
+
+    // Duration matches CSS animation (850ms)
+    setTimeout(() => {
+      setFlyingPackets(prev => prev.filter(p => p.id !== packetId));
+      setIsCartBumping(true);
+      setTimeout(() => setIsCartBumping(false), 550);
+    }, 850);
+  };
+
+  const addToCart = (product, quantity = 1, size = 'Standard Pouch', startRectOrElement = null) => {
+    // If startRect or element/event was provided, trigger flying animation
+    if (startRectOrElement) {
+      let rect = null;
+      if (startRectOrElement.target && typeof startRectOrElement.target.getBoundingClientRect === 'function') {
+        rect = startRectOrElement.currentTarget ? startRectOrElement.currentTarget.getBoundingClientRect() : startRectOrElement.target.getBoundingClientRect();
+      } else if (typeof startRectOrElement.getBoundingClientRect === 'function') {
+        rect = startRectOrElement.getBoundingClientRect();
+      } else if (typeof startRectOrElement.left === 'number') {
+        rect = startRectOrElement;
+      }
+      if (rect) {
+        triggerFlyToCart(product.img, rect);
+      }
+    }
+
     setCart(prev => {
       const existingIndex = prev.findIndex(item => item.product.id === product.id && item.size === size);
       if (existingIndex > -1) {
@@ -268,7 +320,12 @@ export function ShopProvider({ children }) {
       wishlist,
       toggleWishlist,
       searchQuery,
-      setSearchQuery
+      setSearchQuery,
+      isCartDrawerOpen,
+      setIsCartDrawerOpen,
+      isCartBumping,
+      flyingPackets,
+      triggerFlyToCart
     }}>
       {children}
     </ShopContext.Provider>

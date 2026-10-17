@@ -14,11 +14,13 @@ import ContactPage from './pages/ContactPage';
 import FaqPage from './pages/FaqPage';
 import SearchResultsPage from './pages/SearchResultsPage';
 import PolicyPage from './pages/PolicyPage';
+import RightActionSidebar from './components/RightActionSidebar';
 
 function App() {
   return (
     <ShopProvider>
       <BrowserRouter>
+        <RightActionSidebar />
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/shop" element={<ShopPage />} />

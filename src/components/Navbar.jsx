@@ -5,7 +5,7 @@ import { useShop } from '../context/ShopContext';
 const LOGO_URL = "https://lh3.googleusercontent.com/aida/AEtjO1WRl8-BPfBHSoiy5_me7YQmorxgpq7WPX4SJeaDc7eRoQr80O3Q-KPlxYV0iqTng3bCwXA7gXtoKYpfC-o5hHCEejlaB9JPc5_jJ9diwtCiZmLXFMD5Err6zwj96951yNGIeBlr2FNl9jm2nAUkWxi8G8EZUdAJHc29IID-q1Cf04EptcC5KITlTRPWoeAFTKjn1r9cvseOsdPYMDHsp5r-W-lIkA9sim6XM45x1u620tP7ahbP5J5f1fI6";
 
 export default function Navbar() {
-  const { cartCount, wishlist, searchQuery, setSearchQuery } = useShop();
+  const { cartCount, wishlist, searchQuery, setSearchQuery, setIsCartDrawerOpen } = useShop();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -108,70 +108,22 @@ export default function Navbar() {
             })}
           </nav>
 
-          {/* Right Action Icons & Search */}
+          {/* Streamlined Right Controls (Actions docked in Right Sidebar) */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0 whitespace-nowrap flex-nowrap">
-            {/* Search Input */}
-            <form
-              onSubmit={handleSearchSubmit}
-              className="hidden md:flex items-center bg-surface-container-low hover:bg-surface-container px-3 py-1.5 rounded-full text-on-surface-variant border border-[#e8ddca] transition-all shrink-0 focus-within:ring-1 focus-within:ring-[#123420] focus-within:bg-white"
-            >
-              <span className="material-symbols-outlined text-[17px] mr-2 text-[#123420] shrink-0">search</span>
-              <input
-                type="text"
-                value={localSearch}
-                onChange={(e) => setLocalSearch(e.target.value)}
-                placeholder="Search single-origin spices..."
-                className="bg-transparent font-body-sm text-[12.5px] text-on-surface outline-none w-28 xl:w-40 placeholder:text-on-surface-variant/60 whitespace-nowrap"
-              />
-              <kbd className="hidden xl:inline-flex items-center px-1.5 py-0.5 text-[9.5px] font-mono text-on-surface-variant/60 bg-surface rounded border border-[#e8ddca] shrink-0">
-                /
-              </kbd>
-            </form>
-
-            {/* Mobile Search Button */}
+            
+            {/* Quick Bag Trigger Pill */}
             <button
-              onClick={() => setSearchOpen(!searchOpen)}
-              aria-label="Search"
-              className="md:hidden p-2 text-[#1a1c17] hover:text-[#123420] rounded-full hover:bg-surface-container transition-colors cursor-pointer shrink-0"
+              onClick={() => setIsCartDrawerOpen(true)}
+              aria-label="Open Reserve Bag"
+              className="inline-flex items-center gap-2 py-1.5 px-3 sm:px-4 rounded-full bg-[#123420] text-white hover:bg-[#1b432a] transition-all text-[12.5px] font-medium shadow-xs cursor-pointer group"
               type="button"
             >
-              <span className="material-symbols-outlined text-[20px]">search</span>
-            </button>
-
-            {/* Wishlist Link */}
-            <Link
-              aria-label="Wishlist"
-              className="relative p-2 text-[#1a1c17] hover:text-[#94492c] rounded-full hover:bg-surface-container-low transition-colors"
-              to="/shop"
-            >
-              <span className="material-symbols-outlined text-[22px]">favorite</span>
-              {wishlistCount > 0 && (
-                <span className="absolute top-1 right-1 bg-[#94492c] text-white font-label-sm text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold shadow-xs">
-                  {wishlistCount}
-                </span>
-              )}
-            </Link>
-
-            {/* Shopping Cart Link */}
-            <Link
-              aria-label="Shopping Cart"
-              to="/cart"
-              className="relative p-2 text-[#1a1c17] hover:text-[#123420] rounded-full hover:bg-surface-container-low transition-colors"
-            >
-              <span className="material-symbols-outlined text-[22px]">shopping_bag</span>
-              <span className="absolute top-1 right-1 bg-[#94492c] text-white font-label-sm text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold shadow-xs">
+              <span className="material-symbols-outlined text-[17px] text-[#c5ecce]">shopping_bag</span>
+              <span className="hidden sm:inline font-sans font-semibold">Reserve Bag</span>
+              <span className="bg-[#94492c] text-white font-mono text-[10px] px-1.5 py-0.5 rounded-full font-bold">
                 {cartCount}
               </span>
-            </Link>
-
-            {/* Concierge Button */}
-            <Link
-              className="hidden sm:inline-flex items-center gap-1.5 py-1.5 px-3 rounded-full bg-surface-container-low hover:bg-surface-container border border-[#e8ddca] text-[#123420] transition-colors text-[12px] font-semibold"
-              to="/contact"
-            >
-              <span className="material-symbols-outlined text-[16px] text-[#94492c]">support_agent</span>
-              <span>Concierge</span>
-            </Link>
+            </button>
 
             {/* Mobile Hamburger */}
             <button
